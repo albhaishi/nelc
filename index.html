@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>طلب خدمة LMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --purple: #6C63E0; --purple-light: #EAE8FC; --purple-dark: #4B44A8;
+      --text-primary: #1A1A2E; --text-secondary: #5A5A72; --text-muted: #9898AA;
+      --border: #E2E2EE; --bg: #F7F7FB; --white: #FFFFFF;
+      --red: #D84040; --success: #1D9E75;
+      --radius: 10px; --radius-sm: 6px;
+    }
+    body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+
+    /* Topbar */
+    .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--purple); }
+    .logo-icon { width: 32px; height: 32px; background: var(--purple); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { width: 18px; height: 18px; fill: white; }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+    .topbar-breadcrumb { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .topbar-breadcrumb span { color: var(--text-secondary); }
+    .topbar-breadcrumb .sep { color: var(--border); }
+    .user-badge { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px 4px 6px; font-size: 13px; color: var(--text-secondary); }
+    .user-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--purple); color: white; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .share-btn { display: flex; align-items: center; gap: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 5px 13px; font-size: 13px; color: var(--text-secondary); cursor: pointer; font-family: 'IBM Plex Sans Arabic', sans-serif; transition: border-color 0.15s, color 0.15s; }
+    .share-btn:hover { border-color: var(--purple); color: var(--purple); }
+    .share-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+    /* Share modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 300; display: none; align-items: center; justify-content: center; }
+    .modal-backdrop.show { display: flex; }
+    .modal { background: var(--white); border-radius: var(--radius); padding: 1.5rem; width: 440px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .modal-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+    .modal-close { width: 28px; height: 28px; border-radius: 6px; background: var(--bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-muted); }
+    .modal-close:hover { background: var(--border); }
+    .modal-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.6; }
+    .url-row { display: flex; gap: 8px; }
+    .url-input { flex: 1; font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; color: var(--text-primary); outline: none; direction: ltr; text-align: left; }
+    .url-input:focus { border-color: var(--purple); }
+    .copy-btn { background: var(--purple); color: white; font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 18px; border-radius: var(--radius-sm); border: none; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+    .copy-btn:hover { background: var(--purple-dark); }
+    .copy-btn.copied { background: var(--success); }
+    .share-options { display: flex; gap: 8px; margin-top: 1rem; }
+    .share-option { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; background: var(--bg); transition: border-color 0.15s; }
+    .share-option:hover { border-color: var(--purple); background: var(--purple-light); }
+    .share-option-icon { font-size: 20px; }
+    .share-option-label { font-size: 11px; color: var(--text-secondary); }
+
+    /* Layout */
+    .layout { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Page header */
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    /* Auto-fill banner */
+    .autofill-banner { display: flex; align-items: flex-start; gap: 14px; background: linear-gradient(135deg, #EAE8FC 0%, #F0F4FF 100%); border: 1px solid #C4BFEF; border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 1.5rem; }
+    .autofill-icon { width: 38px; height: 38px; background: var(--purple); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .autofill-icon svg { width: 19px; height: 19px; stroke: white; fill: none; stroke-width: 2; }
+    .autofill-body { flex: 1; }
+    .autofill-title { font-size: 14px; font-weight: 600; color: var(--purple-dark); margin-bottom: 3px; }
+    .autofill-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .autofill-sources { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .autofill-tag { font-size: 11px; background: white; border: 1px solid #C4BFEF; color: var(--purple-dark); padding: 3px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+    .autofill-tag::before { content: '✓'; color: var(--success); font-weight: 700; }
+    .btn-autofill { background: var(--purple); color: white; font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 20px; border-radius: var(--radius-sm); border: none; cursor: pointer; white-space: nowrap; flex-shrink: 0; align-self: center; transition: background 0.15s; }
+    .btn-autofill:hover { background: var(--purple-dark); }
+    .btn-autofill:disabled { background: var(--success); cursor: default; }
+
+    /* Steps */
+    .steps { display: flex; align-items: center; margin-bottom: 2rem; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.5rem; }
+    .step-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+    .step-item.done .step-num { background: var(--success); color: white; }
+    .step-item.active .step-num { background: var(--purple); color: white; }
+    .step-item.inactive .step-num { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .step-item.done .step-text { color: var(--text-secondary); }
+    .step-item.active .step-text { color: var(--text-primary); font-weight: 500; }
+    .step-item.inactive .step-text { color: var(--text-muted); }
+    .step-connector { flex: 1; height: 1px; background: var(--border); margin: 0 12px; }
+    .step-connector.done-line { background: var(--success); }
+
+    /* Card */
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .card-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 1.25rem; padding-bottom: 0.875rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .card-title-icon { width: 28px; height: 28px; background: var(--purple-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .card-title-icon svg { width: 15px; height: 15px; stroke: var(--purple); fill: none; stroke-width: 2; }
+    .card-edit-link { margin-right: auto; font-size: 12px; color: var(--purple); cursor: pointer; font-weight: 400; }
+    .card-edit-link:hover { text-decoration: underline; }
+
+    /* Fields */
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .field-full { grid-column: 1 / -1; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; font-weight: 500; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+    .field label .req { color: var(--red); }
+    .auto-badge { font-size: 10px; background: #EAE8FC; color: var(--purple-dark); padding: 2px 8px; border-radius: 10px; font-weight: 500; display: none; }
+    .field input, .field select, .field textarea {
+      font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 9px 13px;
+      color: var(--text-primary); width: 100%; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field input.auto-filled, .field select.auto-filled, .field textarea.auto-filled { background: #F5F3FF; border-color: #C4BFEF; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(108,99,224,0.1); background: var(--white); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-muted); }
+    .field textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%239898AA' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 13px center; cursor: pointer; }
+    .field-hint { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+    /* Upload */
+    .upload-zone { border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 14px; background: var(--bg); display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
+    .upload-zone:hover { border-color: var(--purple); }
+    .upload-btn { background: var(--purple); color: white; font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; font-weight: 500; padding: 6px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+    .upload-btn:hover { background: var(--purple-dark); }
+    .upload-hint { font-size: 12px; color: var(--text-muted); }
+    .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .file-item { display: flex; align-items: center; justify-content: space-between; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 13px; font-size: 13px; color: var(--text-secondary); }
+    .file-left { display: flex; align-items: center; gap: 8px; }
+    .file-badge { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .file-badge.pdf { background: #FEE2E2; color: #991B1B; }
+    .file-badge.docx { background: #DBEAFE; color: #1D4ED8; }
+    .file-remove { font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: color 0.1s; }
+    .file-remove:hover { color: var(--red); background: #FEE2E2; }
+
+    /* Actions */
+    .actions { display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; }
+    .btn-primary { background: var(--purple); color: white; font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; font-weight: 500; padding: 10px 28px; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: background 0.15s, transform 0.1s; }
+    .btn-primary:hover { background: var(--purple-dark); }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-secondary { background: transparent; color: var(--text-secondary); font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; padding: 10px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+    .btn-secondary:hover { background: var(--bg); }
+
+    /* Review */
+    .review-row { display: flex; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--border); gap: 1rem; }
+    .review-row:last-child { border-bottom: none; }
+    .review-label { font-size: 13px; color: var(--text-muted); min-width: 155px; flex-shrink: 0; padding-top: 1px; }
+    .review-value { font-size: 14px; color: var(--text-primary); flex: 1; text-align: right; line-height: 1.6; white-space: pre-wrap; }
+    .submit-note { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; font-size: 13px; color: #166534; line-height: 1.7; display: flex; gap: 10px; align-items: flex-start; }
+
+    /* Overlay */
+    .overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.88); z-index: 200; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    .overlay.show { display: flex; }
+    .spinner { width: 42px; height: 42px; border: 3px solid var(--purple-light); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .overlay-text { font-size: 14px; color: var(--text-secondary); }
+
+    /* Success */
+    .success-wrap { text-align: center; padding: 4rem 1rem; }
+    .success-icon { width: 72px; height: 72px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 32px; }
+    .success-title { font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 420px; margin: 0 auto 1.5rem; }
+
+    @media (max-width: 600px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .steps { flex-wrap: wrap; gap: 8px; }
+      .step-connector { display: none; }
+      .layout { padding: 1.5rem 1rem 3rem; }
+      .autofill-banner { flex-wrap: wrap; }
+      .topbar-breadcrumb { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <div class="overlay-text" id="overlay-text">جارٍ جلب بيانات الجهة...</div>
+</div>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M3 4h14v2H3V4zm0 5h14v2H3V9zm0 5h9v2H3v-2z"/></svg></div>
+    بوابة الخدمات الرقمية
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-breadcrumb">
+      <span>الرئيسية</span><span class="sep">/</span>
+      <span>الخدمات</span><span class="sep">/</span>
+      <span style="color:var(--purple)">طلب منصة LMS</span>
+    </div>
+    <button class="share-btn" onclick="openShare()">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      مشاركة
+    </button>
+    <div class="user-badge">
+      <div class="user-avatar">مح</div>
+      محمد العمري
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-backdrop" id="share-modal" onclick="closeShareOnBackdrop(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">مشاركة النموذج</span>
+      <button class="modal-close" onclick="closeShare()">✕</button>
+    </div>
+    <p class="modal-desc">شارك رابط هذا النموذج مع زملائك في الجهة ليتمكنوا من الاطلاع عليه أو تعبئته.</p>
+    <div class="url-row">
+      <input class="url-input" id="share-url" readonly />
+      <button class="copy-btn" id="copy-btn" onclick="copyLink()">نسخ الرابط</button>
+    </div>
+    <div class="share-options">
+      <div class="share-option" onclick="shareVia('email')">
+        <span class="share-option-icon">📧</span>
+        <span class="share-option-label">البريد الإلكتروني</span>
+      </div>
+      <div class="share-option" onclick="shareVia('whatsapp')">
+        <span class="share-option-icon">💬</span>
+        <span class="share-option-label">واتساب</span>
+      </div>
+      <div class="share-option" onclick="shareVia('teams')">
+        <span class="share-option-icon">🟦</span>
+        <span class="share-option-label">Teams</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ═══════════════════════════════════
+       الصفحة 1 — النموذج
+  ═══════════════════════════════════ -->
+  <div class="page active" id="page-form">
+
+    <div class="page-header">
+      <h1>طلب خدمة LMS — منصة تعليمية للجهات الحكومية</h1>
+      <p>تتيح هذه الخدمة للجهات الحكومية بناء منصات تعليمية وتدريبية متطورة مدعومة من المركز الوطني للتعليم الإلكتروني.</p>
+    </div>
+
+    <!-- بانر التعبئة التلقائية -->
+    <div class="autofill-banner">
+      <div class="autofill-icon">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div class="autofill-body">
+        <div class="autofill-title">تعبئة تلقائية متاحة</div>
+        <div class="autofill-sub">تم التعرف على هويتك والجهة المرتبطة بك. يمكن تعبئة معظم الحقول تلقائياً من مصادر النظام دون أي إدخال يدوي.</div>
+        <div class="autofill-sources">
+          <span class="autofill-tag">بيانات الجهة (نفاذ)</span>
+          <span class="autofill-tag">دومين الجهة المعتمد</span>
+          <span class="autofill-tag">ملف الممثل المعرّف</span>
+        </div>
+      </div>
+      <button class="btn-autofill" id="btn-fill" onclick="doAutoFill()">تعبئة تلقائية</button>
+    </div>
+
+    <!-- شريط الخطوات -->
+    <div class="steps">
+      <div class="step-item done">
+        <div class="step-num"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5L5.5 9.5L10.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="step-text">معلومات المنصة</span>
+      </div>
+      <div class="step-connector done-line"></div>
+      <div class="step-item active">
+        <div class="step-num">2</div>
+        <span class="step-text">نطاق العمل والأهداف</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item inactive">
+        <div class="step-num">3</div>
+        <span class="step-text">مراجعة وتقديم</span>
+      </div>
+    </div>
+
+    <!-- معلومات المنصة -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M8 8h5M8 16h6"/></svg></div>
+        معلومات المنصة
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label><span class="req">*</span> اسم المنصة <span class="auto-badge" id="b-name">تلقائي</span></label>
+          <input type="text" id="f-name" placeholder="أدخل اسم المنصة" />
+        </div>
+        <div class="field">
+          <label><span class="req">*</span> رابط المنصة الفرعي <span class="auto-badge" id="b-url">تلقائي</span></label>
+          <input type="text" id="f-url" placeholder="domain-example.futurex.sa" />
+          <span class="field-hint">يجب أن يكون باللغة الإنجليزية</span>
+        </div>
+        <div class="field">
+          <label><span class="req">*</span> تصنيف المنصة <span class="auto-badge" id="b-type">تلقائي</span></label>
+          <select id="f-type">
+            <option value="" disabled selected>اختر التصنيف</option>
+            <option value="تعليمية">تعليمية</option>
+            <option value="تدريبية">تدريبية</option>
+            <option value="شاملة">شاملة</option>
+          </select>
+        </div>
+        <div class="field">
+          <label><span class="req">*</span> الشريحة المستهدفة <span class="auto-badge" id="b-target">تلقائي</span></label>
+          <select id="f-target">
+            <option value="" disabled selected>اختر الشريحة</option>
+            <option value="منسوبي الجهة فقط">منسوبي الجهة فقط</option>
+            <option value="قطاع الجهة">قطاع الجهة</option>
+            <option value="عامة">عامة</option>
+          </select>
+        </div>
+        <div class="field field-full">
+          <label><span class="req">*</span> وصف المنصة <span class="auto-badge" id="b-desc">تلقائي</span></label>
+          <textarea id="f-desc" placeholder="اكتب وصفاً مختصراً لمحتوى المنصة وطبيعة استخدامها..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- نطاق العمل والأهداف -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
+        نطاق العمل والأهداف
+      </div>
+      <div class="field-grid">
+        <div class="field field-full">
+          <label><span class="req">*</span> شعار المنصة <span class="auto-badge" id="b-logo">تلقائي</span></label>
+          <div class="upload-zone">
+            <button class="upload-btn" type="button">إضافة</button>
+            <span class="upload-hint" id="logo-hint">PNG أو SVG — الحد الأقصى 2 ميجابايت</span>
+          </div>
+        </div>
+        <div class="field field-full">
+          <label><span class="req">*</span> نطاق العمل <span class="auto-badge" id="b-scope">تلقائي</span></label>
+          <textarea id="f-scope" placeholder="صف النطاق الوظيفي والتشغيلي للمنصة..."></textarea>
+        </div>
+        <div class="field field-full">
+          <label><span class="req">*</span> الأهداف <span class="auto-badge" id="b-goals">تلقائي</span></label>
+          <textarea id="f-goals" placeholder="ما الأهداف التي تسعى المنصة إلى تحقيقها؟"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- الملفات الداعمة -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        الملفات الداعمة
+      </div>
+      <div class="field">
+        <div class="upload-zone">
+          <button class="upload-btn" type="button">+ إضافة ملف</button>
+          <span class="upload-hint">PDF أو Word أو Excel — الحد الأقصى 10 ميجابايت لكل ملف</span>
+        </div>
+        <div class="file-list">
+          <div class="file-item">
+            <div class="file-left"><span class="file-badge pdf">PDF</span>خطة_المنصة_2025.pdf</div>
+            <span class="file-remove">✕</span>
+          </div>
+          <div class="file-item">
+            <div class="file-left"><span class="file-badge docx">DOCX</span>متطلبات_الجهة.docx</div>
+            <span class="file-remove">✕</span>
+          </div>
+        </div>
+        <span class="field-hint" style="margin-top:8px;display:block">يمكنك إرفاق وثائق تدعم الطلب كخطط التدريب أو الموافقات الداخلية.</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" onclick="goToReview()">التالي</button>
+      <button class="btn-secondary">حفظ كمسودة</button>
+    </div>
+
+  </div><!-- /page-form -->
+
+
+  <!-- ═══════════════════════════════════
+       الصفحة 2 — مراجعة وتقديم
+  ═══════════════════════════════════ -->
+  <div class="page" id="page-review">
+
+    <div class="page-header">
+      <h1>مراجعة وتقديم الطلب</h1>
+      <p>يرجى مراجعة البيانات أدناه قبل التقديم. يمكنك العودة لتعديل أي حقل.</p>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step-item done">
+        <div class="step-num"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5L5.5 9.5L10.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="step-text">معلومات المنصة</span>
+      </div>
+      <div class="step-connector done-line"></div>
+      <div class="step-item done">
+        <div class="step-num"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5L5.5 9.5L10.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="step-text">نطاق العمل والأهداف</span>
+      </div>
+      <div class="step-connector done-line"></div>
+      <div class="step-item active">
+        <div class="step-num">3</div>
+        <span class="step-text">مراجعة وتقديم</span>
+      </div>
+    </div>
+
+    <div class="submit-note">
+      <span style="font-size:16px;flex-shrink:0">✅</span>
+      <div>تم ربط الطلب بحساب الممثل <strong>محمد العمري</strong> وجهة <strong>وزارة التعليم</strong> تلقائياً. بعد التقديم سيُرسَل إشعار تأكيد إلى البريد الرسمي المسجل في نفاذ.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M8 8h5M8 16h6"/></svg></div>
+        معلومات المنصة
+        <span class="card-edit-link" onclick="goBack()">تعديل</span>
+      </div>
+      <div class="review-row"><span class="review-label">اسم المنصة</span><span class="review-value" id="r-name">—</span></div>
+      <div class="review-row"><span class="review-label">رابط المنصة الفرعي</span><span class="review-value" id="r-url">—</span></div>
+      <div class="review-row"><span class="review-label">تصنيف المنصة</span><span class="review-value" id="r-type">—</span></div>
+      <div class="review-row"><span class="review-label">الشريحة المستهدفة</span><span class="review-value" id="r-target">—</span></div>
+      <div class="review-row"><span class="review-label">وصف المنصة</span><span class="review-value" id="r-desc">—</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
+        نطاق العمل والأهداف
+        <span class="card-edit-link" onclick="goBack()">تعديل</span>
+      </div>
+      <div class="review-row"><span class="review-label">شعار المنصة</span><span class="review-value" id="r-logo">سيُستخدم الشعار الرسمي للجهة</span></div>
+      <div class="review-row"><span class="review-label">نطاق العمل</span><span class="review-value" id="r-scope">—</span></div>
+      <div class="review-row"><span class="review-label">الأهداف</span><span class="review-value" id="r-goals">—</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        الملفات الداعمة
+        <span class="card-edit-link" onclick="goBack()">تعديل</span>
+      </div>
+      <div class="review-row" style="border:none">
+        <span class="review-label">الملفات المرفقة</span>
+        <span class="review-value">
+          <span style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#FEE2E2;color:#991B1B;padding:2px 6px;border-radius:4px">PDF</span>خطة_المنصة_2025.pdf</span>
+            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#DBEAFE;color:#1D4ED8;padding:2px 6px;border-radius:4px">DOCX</span>متطلبات_الجهة.docx</span>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" onclick="submitForm()">تقديم الطلب</button>
+      <button class="btn-secondary" onclick="goBack()">العودة للتعديل</button>
+    </div>
+
+  </div><!-- /page-review -->
+
+
+  <!-- ═══════════════════════════════════
+       الصفحة 3 — تم التقديم
+  ═══════════════════════════════════ -->
+  <div class="page" id="page-success">
+    <div class="success-wrap">
+      <div class="success-icon">✅</div>
+      <div class="success-title">تم تقديم الطلب بنجاح</div>
+      <div class="success-sub">رقم طلبك هو <strong id="req-num" style="color:var(--purple)"></strong>. سيتم مراجعته خلال 3–5 أيام عمل وإرسال الإشعار على بريدك الرسمي.</div>
+      <button class="btn-primary" onclick="resetForm()">طلب جديد</button>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<script>
+  // ── بيانات وهمية تُحاكي ما يُجلب من نظام نفاذ والدليل الموحد ──────────────
+  const orgContext = {
+    orgName:   "وزارة التعليم",
+    orgDomain: "moe.futurex.sa",
+    orgType:   "تدريبية",
+    orgTarget: "منسوبي الجهة فقط",
+    orgDesc:   "منصة تعليمية وتدريبية لمنسوبي وزارة التعليم تهدف إلى رفع الكفاءة المهنية وتطوير المهارات عبر محتوى رقمي متخصص.",
+    orgScope:  "تشمل المنصة تدريب موظفي الوزارة في مختلف الإدارات والمناطق التعليمية، وتغطي البرامج التأهيلية والتحديثية المعتمدة.",
+    orgGoals:  "١. رفع كفاءة منسوبي الوزارة بنسبة 30% خلال العام الأول.\n٢. توفير أكثر من 500 ساعة تدريبية رقمية سنوياً.\n٣. تحقيق معدل إتمام 80% في البرامج الإلزامية.",
+  };
+
+  let filled = false;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  async function doAutoFill() {
+    if (filled) return;
+    const overlay = document.getElementById('overlay');
+    const txt = document.getElementById('overlay-text');
+    const steps = [
+      { msg: 'جارٍ التحقق من هوية الممثل عبر نفاذ...', ms: 750 },
+      { msg: 'جارٍ جلب بيانات الجهة من الدليل الموحد...', ms: 850 },
+      { msg: 'جارٍ استيراد الدومين المعتمد...', ms: 600 },
+      { msg: 'جارٍ توليد نطاق العمل والأهداف...', ms: 700 },
+      { msg: 'جارٍ تطبيق البيانات على الحقول...', ms: 500 },
+    ];
+    overlay.classList.add('show');
+    for (const s of steps) { txt.textContent = s.msg; await sleep(s.ms); }
+    overlay.classList.remove('show');
+
+    setField('f-name',  orgContext.orgName,   'b-name');
+    setField('f-url',   orgContext.orgDomain,  'b-url');
+    setSelect('f-type', orgContext.orgType,    'b-type');
+    setSelect('f-target', orgContext.orgTarget,'b-target');
+    setField('f-desc',  orgContext.orgDesc,    'b-desc');
+    setField('f-scope', orgContext.orgScope,   'b-scope');
+    setField('f-goals', orgContext.orgGoals,   'b-goals');
+
+    document.getElementById('logo-hint').textContent = 'سيُستخدم الشعار الرسمي المعتمد للجهة تلقائياً';
+    document.getElementById('b-logo').style.display = 'inline-block';
+
+    const btn = document.getElementById('btn-fill');
+    btn.textContent = '✓ تمت التعبئة';
+    btn.disabled = true;
+
+    filled = true;
+  }
+
+  function setField(id, val, badgeId) {
+    const el = document.getElementById(id);
+    el.value = val;
+    el.classList.add('auto-filled');
+    document.getElementById(badgeId).style.display = 'inline-block';
+  }
+
+  function setSelect(id, val, badgeId) {
+    const el = document.getElementById(id);
+    for (let o of el.options) if (o.value === val) { o.selected = true; break; }
+    el.classList.add('auto-filled');
+    document.getElementById(badgeId).style.display = 'inline-block';
+  }
+
+  function v(id) { const el = document.getElementById(id); return el?.value?.trim() || '—'; }
+
+  function goToReview() {
+    document.getElementById('r-name').textContent   = v('f-name');
+    document.getElementById('r-url').textContent    = v('f-url');
+    document.getElementById('r-type').textContent   = v('f-type');
+    document.getElementById('r-target').textContent = v('f-target');
+    document.getElementById('r-desc').textContent   = v('f-desc');
+    document.getElementById('r-scope').textContent  = v('f-scope');
+    document.getElementById('r-goals').textContent  = v('f-goals');
+    switchPage('page-form', 'page-review');
+  }
+
+  function goBack() { switchPage('page-review', 'page-form'); }
+
+  async function submitForm() {
+    const overlay = document.getElementById('overlay');
+    const txt = document.getElementById('overlay-text');
+    overlay.classList.add('show');
+    txt.textContent = 'جارٍ رفع الطلب...'; await sleep(700);
+    txt.textContent = 'جارٍ إرسال إشعار التأكيد...'; await sleep(600);
+    overlay.classList.remove('show');
+    document.getElementById('req-num').textContent = 'LMS-' + Math.floor(100000 + Math.random() * 900000);
+    switchPage('page-review', 'page-success');
+  }
+
+  function resetForm() {
+    ['f-name','f-url','f-desc','f-scope','f-goals'].forEach(id => {
+      const el = document.getElementById(id); el.value=''; el.classList.remove('auto-filled');
+    });
+    ['f-type','f-target'].forEach(id => {
+      const el = document.getElementById(id); el.selectedIndex=0; el.classList.remove('auto-filled');
+    });
+    ['b-name','b-url','b-type','b-target','b-desc','b-scope','b-goals','b-logo'].forEach(id => {
+      document.getElementById(id).style.display='none';
+    });
+    document.getElementById('logo-hint').textContent = 'PNG أو SVG — الحد الأقصى 2 ميجابايت';
+    const btn = document.getElementById('btn-fill');
+    btn.textContent = 'تعبئة تلقائية'; btn.disabled = false;
+    filled = false;
+    switchPage('page-success', 'page-form');
+  }
+
+  function switchPage(fromId, toId) {
+    document.getElementById(fromId).classList.remove('active');
+    document.getElementById(toId).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Share ──────────────────────────────────────────────────────────────────
+  function openShare() {
+    const url = window.location.href.split('?')[0] + '?ref=shared';
+    document.getElementById('share-url').value = url;
+    document.getElementById('share-modal').classList.add('show');
+  }
+  function closeShare() {
+    document.getElementById('share-modal').classList.remove('show');
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'نسخ الرابط'; btn.classList.remove('copied');
+  }
+  function closeShareOnBackdrop(e) {
+    if (e.target === document.getElementById('share-modal')) closeShare();
+  }
+  async function copyLink() {
+    const url = document.getElementById('share-url').value;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      document.getElementById('share-url').select();
+      document.execCommand('copy');
+    }
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ تم النسخ'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'نسخ الرابط'; btn.classList.remove('copied'); }, 2500);
+  }
+  function shareVia(channel) {
+    const url = document.getElementById('share-url').value;
+    const text = 'نموذج طلب خدمة LMS — منصة تعليمية للجهات الحكومية';
+    const links = {
+      email:    `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`,
+      teams:    `https://teams.microsoft.com/share?href=${encodeURIComponent(url)}&msgText=${encodeURIComponent(text)}`,
+    };
+    window.open(links[channel], '_blank');
+  }
+</script>
+</body>
+</html>
