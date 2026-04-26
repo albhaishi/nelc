@@ -261,14 +261,14 @@
 
     <!-- شريط الخطوات -->
     <div class="steps">
-      <div class="step-item done">
-        <div class="step-num"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5L5.5 9.5L10.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step-item active">
+        <div class="step-num">1</div>
         <span class="step-text">معلومات المنصة</span>
       </div>
-      <div class="step-connector done-line"></div>
-      <div class="step-item active">
+      <div class="step-connector"></div>
+      <div class="step-item inactive">
         <div class="step-num">2</div>
-        <span class="step-text">نطاق العمل والأهداف</span>
+        <span class="step-text">الملفات الداعمة</span>
       </div>
       <div class="step-connector"></div>
       <div class="step-item inactive">
@@ -303,38 +303,29 @@
           </select>
         </div>
         <div class="field">
-          <label><span class="req">*</span> الشريحة المستهدفة <span class="auto-badge" id="b-target">تلقائي</span></label>
+          <label><span class="req">*</span> الفئة المستهدفة <span class="auto-badge" id="b-target">تلقائي</span></label>
           <select id="f-target">
-            <option value="" disabled selected>اختر الشريحة</option>
+            <option value="" disabled selected>تحديد الفئة المستهدفة</option>
             <option value="منسوبي الجهة فقط">منسوبي الجهة فقط</option>
             <option value="قطاع الجهة">قطاع الجهة</option>
             <option value="عامة">عامة</option>
           </select>
         </div>
+        <div class="field">
+          <label><span class="req">*</span> عدد المستخدمين المتوقعين</label>
+          <select id="f-users">
+            <option value="" disabled selected>اختر النطاق</option>
+            <option value="أقل من 500">أقل من 500</option>
+            <option value="500 - 2,000">500 – 2,000</option>
+            <option value="2,000 - 10,000">2,000 – 10,000</option>
+            <option value="10,000 - 50,000">10,000 – 50,000</option>
+            <option value="أكثر من 50,000">أكثر من 50,000</option>
+          </select>
+          <span class="field-hint">العدد التقريبي للمستخدمين النشطين على المنصة</span>
+        </div>
         <div class="field field-full">
           <label><span class="req">*</span> وصف المنصة <span class="auto-badge" id="b-desc">تلقائي</span></label>
           <textarea id="f-desc" placeholder="اكتب وصفاً مختصراً لمحتوى المنصة وطبيعة استخدامها..."></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- نطاق العمل والأهداف -->
-    <div class="card">
-      <div class="card-title">
-        <div class="card-title-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
-        نطاق العمل والأهداف
-      </div>
-      <div class="field-grid">
-        <div class="field field-full">
-          <label><span class="req">*</span> شعار المنصة <span class="auto-badge" id="b-logo">تلقائي</span></label>
-          <div class="upload-zone">
-            <button class="upload-btn" type="button">إضافة</button>
-            <span class="upload-hint" id="logo-hint">PNG أو SVG — الحد الأقصى 2 ميجابايت</span>
-          </div>
-        </div>
-        <div class="field field-full">
-          <label><span class="req">*</span> نطاق العمل <span class="auto-badge" id="b-scope">تلقائي</span></label>
-          <textarea id="f-scope" placeholder="صف النطاق الوظيفي والتشغيلي للمنصة..."></textarea>
         </div>
         <div class="field field-full">
           <label><span class="req">*</span> الأهداف <span class="auto-badge" id="b-goals">تلقائي</span></label>
@@ -352,19 +343,38 @@
       <div class="field">
         <div class="upload-zone">
           <button class="upload-btn" type="button">+ إضافة ملف</button>
-          <span class="upload-hint">PDF أو Word أو Excel — الحد الأقصى 10 ميجابايت لكل ملف</span>
+          <span class="upload-hint">PDF أو Word أو PNG أو SVG — الحد الأقصى 10 ميجابايت لكل ملف</span>
         </div>
         <div class="file-list">
           <div class="file-item">
-            <div class="file-left"><span class="file-badge pdf">PDF</span>خطة_المنصة_2025.pdf</div>
+            <div class="file-left"><span class="file-badge" style="background:#EAE8FC;color:#4B44A8;font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px">SVG</span>شعار_المنصة <span style="font-size:11px;color:var(--text-muted);margin-right:4px">(مطلوب)</span></div>
             <span class="file-remove">✕</span>
           </div>
           <div class="file-item">
-            <div class="file-left"><span class="file-badge docx">DOCX</span>متطلبات_الجهة.docx</div>
+            <div class="file-left"><span class="file-badge pdf">PDF</span>هوية_الجهة <span style="font-size:11px;color:var(--text-muted);margin-right:4px">(مطلوب)</span></div>
+            <span class="file-remove">✕</span>
+          </div>
+          <div class="file-item">
+            <div class="file-left"><span class="file-badge pdf">PDF</span>تصميم_المنصة <span style="font-size:11px;color:#B45309;margin-right:4px">(اختياري)</span></div>
+            <span class="file-remove">✕</span>
+          </div>
+          <div class="file-item">
+            <div class="file-left"><span class="file-badge docx">DOCX</span>تصنيفات_المنصة <span style="font-size:11px;color:#B45309;margin-right:4px">(اختياري)</span></div>
             <span class="file-remove">✕</span>
           </div>
         </div>
-        <span class="field-hint" style="margin-top:8px;display:block">يمكنك إرفاق وثائق تدعم الطلب كخطط التدريب أو الموافقات الداخلية.</span>
+        <span class="field-hint" style="margin-top:8px;display:block">يمكنك إرفاق وثائق تدعم الطلب كملفات الهوية البصرية أو تصنيفات المحتوى.</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-right: 3px solid var(--purple);">
+      <div style="display:flex; align-items:flex-start; gap:12px;">
+        <input type="checkbox" id="policy-check" style="width:18px;height:18px;margin-top:2px;accent-color:var(--purple);cursor:pointer;flex-shrink:0;" />
+        <label for="policy-check" style="font-size:13px;color:var(--text-secondary);line-height:1.7;cursor:pointer;">
+          أقر بالاطلاع على
+          <a href="https://docs.google.com/document/d/1VpH-8fUdsK50wXLP8lSfJsRXArW6tFmy/edit?usp=sharing&ouid=112542796945036126407&rtpof=true&sd=true" target="_blank" style="color:var(--purple);text-decoration:none;font-weight:500;">سياسات الموارد التعليمية الرقمية المشتركة</a>
+          الصادرة عن المركز الوطني للتعليم الإلكتروني، والموافقة على الالتزام بها في تشغيل المنصة المطلوبة وإدارة محتواها.
+        </label>
       </div>
     </div>
 
@@ -395,7 +405,7 @@
       <div class="step-connector done-line"></div>
       <div class="step-item done">
         <div class="step-num"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5L5.5 9.5L10.5 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <span class="step-text">نطاق العمل والأهداف</span>
+        <span class="step-text">الملفات الداعمة</span>
       </div>
       <div class="step-connector done-line"></div>
       <div class="step-item active">
@@ -409,6 +419,11 @@
       <div>تم ربط الطلب بحساب الممثل <strong>محمد العمري</strong> وجهة <strong>وزارة التعليم</strong> تلقائياً. بعد التقديم سيُرسَل إشعار تأكيد إلى البريد الرسمي المسجل في نفاذ.</div>
     </div>
 
+    <div style="display:flex;align-items:center;gap:10px;background:#F5F3FF;border:1px solid #C4BFEF;border-radius:var(--radius);padding:0.875rem 1.25rem;margin-bottom:1.25rem;font-size:13px;color:var(--purple-dark);">
+      <span style="font-size:15px">📋</span>
+      <span>تمت الموافقة على <strong>سياسات الموارد التعليمية الرقمية المشتركة</strong></span>
+    </div>
+
     <div class="card">
       <div class="card-title">
         <div class="card-title-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M8 8h5M8 16h6"/></svg></div>
@@ -418,18 +433,9 @@
       <div class="review-row"><span class="review-label">اسم المنصة</span><span class="review-value" id="r-name">—</span></div>
       <div class="review-row"><span class="review-label">رابط المنصة الفرعي</span><span class="review-value" id="r-url">—</span></div>
       <div class="review-row"><span class="review-label">تصنيف المنصة</span><span class="review-value" id="r-type">—</span></div>
-      <div class="review-row"><span class="review-label">الشريحة المستهدفة</span><span class="review-value" id="r-target">—</span></div>
+      <div class="review-row"><span class="review-label">الفئة المستهدفة</span><span class="review-value" id="r-target">—</span></div>
+      <div class="review-row"><span class="review-label">عدد المستخدمين المتوقعين</span><span class="review-value" id="r-users">—</span></div>
       <div class="review-row"><span class="review-label">وصف المنصة</span><span class="review-value" id="r-desc">—</span></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <div class="card-title-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
-        نطاق العمل والأهداف
-        <span class="card-edit-link" onclick="goBack()">تعديل</span>
-      </div>
-      <div class="review-row"><span class="review-label">شعار المنصة</span><span class="review-value" id="r-logo">سيُستخدم الشعار الرسمي للجهة</span></div>
-      <div class="review-row"><span class="review-label">نطاق العمل</span><span class="review-value" id="r-scope">—</span></div>
       <div class="review-row"><span class="review-label">الأهداف</span><span class="review-value" id="r-goals">—</span></div>
     </div>
 
@@ -443,8 +449,10 @@
         <span class="review-label">الملفات المرفقة</span>
         <span class="review-value">
           <span style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#FEE2E2;color:#991B1B;padding:2px 6px;border-radius:4px">PDF</span>خطة_المنصة_2025.pdf</span>
-            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#DBEAFE;color:#1D4ED8;padding:2px 6px;border-radius:4px">DOCX</span>متطلبات_الجهة.docx</span>
+            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#EAE8FC;color:#4B44A8;padding:2px 6px;border-radius:4px">SVG</span>شعار_المنصة</span>
+            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#FEE2E2;color:#991B1B;padding:2px 6px;border-radius:4px">PDF</span>هوية_الجهة</span>
+            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#FEE2E2;color:#991B1B;padding:2px 6px;border-radius:4px">PDF</span>تصميم_المنصة <span style="font-size:11px;color:#B45309">(اختياري)</span></span>
+            <span style="display:flex;align-items:center;gap:7px;font-size:13px"><span style="font-size:10px;font-weight:600;background:#DBEAFE;color:#1D4ED8;padding:2px 6px;border-radius:4px">DOCX</span>تصنيفات_المنصة</span>
           </span>
         </span>
       </div>
@@ -537,12 +545,20 @@
   function v(id) { const el = document.getElementById(id); return el?.value?.trim() || '—'; }
 
   function goToReview() {
+    if (!document.getElementById('policy-check').checked) {
+      const card = document.getElementById('policy-check').closest('.card');
+      card.style.borderColor = 'var(--red)';
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { card.style.borderColor = 'var(--purple)'; }, 2500);
+      return;
+    }
     document.getElementById('r-name').textContent   = v('f-name');
     document.getElementById('r-url').textContent    = v('f-url');
     document.getElementById('r-type').textContent   = v('f-type');
     document.getElementById('r-target').textContent = v('f-target');
+    document.getElementById('r-users').textContent  = v('f-users');
     document.getElementById('r-desc').textContent   = v('f-desc');
-    document.getElementById('r-scope').textContent  = v('f-scope');
+    document.getElementById('r-scope') && (document.getElementById('r-scope').textContent = v('f-scope'));
     document.getElementById('r-goals').textContent  = v('f-goals');
     switchPage('page-form', 'page-review');
   }
