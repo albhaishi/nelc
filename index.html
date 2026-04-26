@@ -284,18 +284,20 @@
         معلومات المنصة
       </div>
       <div class="field-grid">
-        <div class="field">
+
+        <!-- اسم المنصة — سطر كامل -->
+        <div class="field field-full">
           <label><span class="req">*</span> اسم المنصة <span class="auto-badge" id="b-name">تلقائي</span></label>
           <input type="text" id="f-name" placeholder="أدخل اسم المنصة" />
         </div>
-        <div class="field">
-          <label><span class="req">*</span> رابط المنصة الفرعي <span class="auto-badge" id="b-url">تلقائي</span></label>
-          <div style="display:flex;gap:0">
-            <input type="text" id="f-url" placeholder="moe" style="border-radius:var(--radius-sm) 0 0 var(--radius-sm);border-left:none;flex:1" />
-            <span style="background:var(--border);border:1px solid var(--border);border-right:1px solid var(--border);padding:9px 12px;font-size:13px;color:var(--text-secondary);white-space:nowrap;border-radius:0 var(--radius-sm) var(--radius-sm) 0">.futurex.sa</span>
-          </div>
-          <span class="field-hint">يجب أن يكون باللغة الإنجليزية</span>
+
+        <!-- وصف المنصة والأهداف — سطر كامل -->
+        <div class="field field-full">
+          <label><span class="req">*</span> وصف المنصة والأهداف <span class="auto-badge" id="b-desc">تلقائي</span></label>
+          <textarea id="f-desc" placeholder="اكتب وصفاً مختصراً لمحتوى المنصة وأهدافها..." style="min-height:110px"></textarea>
         </div>
+
+        <!-- تصنيف المنصة + الفئة المستهدفة -->
         <div class="field">
           <label><span class="req">*</span> تصنيف المنصة <span class="auto-badge" id="b-type">تلقائي</span></label>
           <select id="f-type">
@@ -314,6 +316,8 @@
             <option value="عامة">عامة</option>
           </select>
         </div>
+
+        <!-- عدد المستخدمين — سطر كامل -->
         <div class="field field-full">
           <label><span class="req">*</span> عدد المستخدمين المتوقعين</label>
           <select id="f-users">
@@ -362,10 +366,16 @@
           </div>
         </div>
 
+        <!-- رابط نظام إدارة التعلم — آخر حقل -->
         <div class="field field-full">
-          <label><span class="req">*</span> وصف المنصة والأهداف <span class="auto-badge" id="b-desc">تلقائي</span></label>
-          <textarea id="f-desc" placeholder="اكتب وصفاً مختصراً لمحتوى المنصة وأهدافها..." style="min-height:110px"></textarea>
+          <label><span class="req">*</span> رابط نظام إدارة التعلم المقترح <span class="auto-badge" id="b-url">تلقائي</span></label>
+          <div style="display:flex;gap:0">
+            <input type="text" id="f-url" placeholder="moe" style="border-radius:var(--radius-sm) 0 0 var(--radius-sm);border-left:none;flex:1" />
+            <span style="background:var(--border);border:1px solid var(--border);padding:9px 12px;font-size:13px;color:var(--text-secondary);white-space:nowrap;border-radius:0 var(--radius-sm) var(--radius-sm) 0">.futurex.sa</span>
+          </div>
+          <span class="field-hint">يجب أن يكون باللغة الإنجليزية</span>
         </div>
+
       </div>
     </div>
 
@@ -466,7 +476,7 @@
         <span class="card-edit-link" onclick="goBack()">تعديل</span>
       </div>
       <div class="review-row"><span class="review-label">اسم المنصة</span><span class="review-value" id="r-name">—</span></div>
-      <div class="review-row"><span class="review-label">رابط المنصة الفرعي</span><span class="review-value" id="r-url">—</span></div>
+      <div class="review-row"><span class="review-label">رابط نظام إدارة التعلم</span><span class="review-value" id="r-url">—</span></div>
       <div class="review-row"><span class="review-label">تصنيف المنصة</span><span class="review-value" id="r-type">—</span></div>
       <div class="review-row"><span class="review-label">الفئة المستهدفة</span><span class="review-value" id="r-target">—</span></div>
       <div class="review-row"><span class="review-label">عدد المستخدمين المتوقعين</span><span class="review-value" id="r-users">—</span></div>
