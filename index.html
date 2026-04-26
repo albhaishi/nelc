@@ -238,8 +238,8 @@
   <div class="page active" id="page-form">
 
     <div class="page-header">
-      <h1>طلب خدمة LMS — منصة تعليمية للجهات الحكومية</h1>
-      <p>تتيح هذه الخدمة للجهات الحكومية بناء منصات تعليمية وتدريبية متطورة مدعومة من المركز الوطني للتعليم الإلكتروني.</p>
+      <h1>طلب خدمة LMS — نظام إدارة تعلم</h1>
+      <p>تتيح هذه الخدمة للجهات الحكومية طلب نظام إدارة تعلم مدعوم من المركز الوطني للتعليم الإلكتروني.</p>
     </div>
 
     <!-- بانر التعبئة التلقائية -->
@@ -290,7 +290,10 @@
         </div>
         <div class="field">
           <label><span class="req">*</span> رابط المنصة الفرعي <span class="auto-badge" id="b-url">تلقائي</span></label>
-          <input type="text" id="f-url" placeholder="domain-example.futurex.sa" />
+          <div style="display:flex;gap:0">
+            <input type="text" id="f-url" placeholder="moe" style="border-radius:var(--radius-sm) 0 0 var(--radius-sm);border-left:none;flex:1" />
+            <span style="background:var(--border);border:1px solid var(--border);border-right:1px solid var(--border);padding:9px 12px;font-size:13px;color:var(--text-secondary);white-space:nowrap;border-radius:0 var(--radius-sm) var(--radius-sm) 0">.futurex.sa</span>
+          </div>
           <span class="field-hint">يجب أن يكون باللغة الإنجليزية</span>
         </div>
         <div class="field">
@@ -299,7 +302,7 @@
             <option value="" disabled selected>اختر التصنيف</option>
             <option value="تعليمية">تعليمية</option>
             <option value="تدريبية">تدريبية</option>
-            <option value="شاملة">شاملة</option>
+            <option value="شاملة (تعليم وتدريب)">شاملة (تعليم وتدريب)</option>
           </select>
         </div>
         <div class="field">
@@ -311,7 +314,7 @@
             <option value="عامة">عامة</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field field-full">
           <label><span class="req">*</span> عدد المستخدمين المتوقعين</label>
           <select id="f-users">
             <option value="" disabled selected>اختر النطاق</option>
@@ -323,13 +326,45 @@
           </select>
           <span class="field-hint">العدد التقريبي للمستخدمين النشطين على المنصة</span>
         </div>
+
+        <!-- أسئلة نعم/لا -->
         <div class="field field-full">
-          <label><span class="req">*</span> وصف المنصة <span class="auto-badge" id="b-desc">تلقائي</span></label>
-          <textarea id="f-desc" placeholder="اكتب وصفاً مختصراً لمحتوى المنصة وطبيعة استخدامها..."></textarea>
+          <label><span class="req">*</span> هل تستهدف المنصة مستفيدين خارج المملكة العربية السعودية؟</label>
+          <div style="display:flex;gap:1.5rem;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;font-weight:400;color:var(--text-primary)">
+              <input type="radio" name="q1" value="نعم" style="accent-color:var(--purple);width:16px;height:16px" /> نعم
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;font-weight:400;color:var(--text-primary)">
+              <input type="radio" name="q1" value="لا" checked style="accent-color:var(--purple);width:16px;height:16px" /> لا
+            </label>
+          </div>
         </div>
         <div class="field field-full">
-          <label><span class="req">*</span> الأهداف <span class="auto-badge" id="b-goals">تلقائي</span></label>
-          <textarea id="f-goals" placeholder="ما الأهداف التي تسعى المنصة إلى تحقيقها؟"></textarea>
+          <label><span class="req">*</span> هل لدى الجهة منصة أو نظام تعليم أو تدريب إلكتروني حالياً؟</label>
+          <div style="display:flex;gap:1.5rem;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;font-weight:400;color:var(--text-primary)">
+              <input type="radio" name="q2" value="نعم" style="accent-color:var(--purple);width:16px;height:16px" /> نعم
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;font-weight:400;color:var(--text-primary)">
+              <input type="radio" name="q2" value="لا" checked style="accent-color:var(--purple);width:16px;height:16px" /> لا
+            </label>
+          </div>
+        </div>
+        <div class="field field-full">
+          <label><span class="req">*</span> هل لدى الجهة برامج إلكترونية جاهزة لإضافتها على نظام التعلم؟</label>
+          <div style="display:flex;gap:1.5rem;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;font-weight:400;color:var(--text-primary)">
+              <input type="radio" name="q3" value="نعم" checked style="accent-color:var(--purple);width:16px;height:16px" /> نعم
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:14px;cursor:pointer;font-weight:400;color:var(--text-primary)">
+              <input type="radio" name="q3" value="لا" style="accent-color:var(--purple);width:16px;height:16px" /> لا
+            </label>
+          </div>
+        </div>
+
+        <div class="field field-full">
+          <label><span class="req">*</span> وصف المنصة والأهداف <span class="auto-badge" id="b-desc">تلقائي</span></label>
+          <textarea id="f-desc" placeholder="اكتب وصفاً مختصراً لمحتوى المنصة وأهدافها..." style="min-height:110px"></textarea>
         </div>
       </div>
     </div>
@@ -435,8 +470,10 @@
       <div class="review-row"><span class="review-label">تصنيف المنصة</span><span class="review-value" id="r-type">—</span></div>
       <div class="review-row"><span class="review-label">الفئة المستهدفة</span><span class="review-value" id="r-target">—</span></div>
       <div class="review-row"><span class="review-label">عدد المستخدمين المتوقعين</span><span class="review-value" id="r-users">—</span></div>
-      <div class="review-row"><span class="review-label">وصف المنصة</span><span class="review-value" id="r-desc">—</span></div>
-      <div class="review-row"><span class="review-label">الأهداف</span><span class="review-value" id="r-goals">—</span></div>
+      <div class="review-row"><span class="review-label">مستفيدون خارج المملكة</span><span class="review-value" id="r-q1">—</span></div>
+      <div class="review-row"><span class="review-label">منصة أو نظام حالي</span><span class="review-value" id="r-q2">—</span></div>
+      <div class="review-row"><span class="review-label">برامج إلكترونية جاهزة</span><span class="review-value" id="r-q3">—</span></div>
+      <div class="review-row"><span class="review-label">وصف المنصة والأهداف</span><span class="review-value" id="r-desc">—</span></div>
     </div>
 
     <div class="card">
@@ -511,12 +548,10 @@
     overlay.classList.remove('show');
 
     setField('f-name',  orgContext.orgName,   'b-name');
-    setField('f-url',   orgContext.orgDomain,  'b-url');
-    setSelect('f-type', orgContext.orgType,    'b-type');
+    setField('f-url',   'moe',                'b-url');
+    setSelect('f-type', 'شاملة (تعليم وتدريب)', 'b-type');
     setSelect('f-target', orgContext.orgTarget,'b-target');
-    setField('f-desc',  orgContext.orgDesc,    'b-desc');
-    setField('f-scope', orgContext.orgScope,   'b-scope');
-    setField('f-goals', orgContext.orgGoals,   'b-goals');
+    setField('f-desc',  orgContext.orgDesc + '\n\nالأهداف:\n' + orgContext.orgGoals, 'b-desc');
 
     document.getElementById('logo-hint').textContent = 'سيُستخدم الشعار الرسمي المعتمد للجهة تلقائياً';
     document.getElementById('b-logo').style.display = 'inline-block';
@@ -553,13 +588,14 @@
       return;
     }
     document.getElementById('r-name').textContent   = v('f-name');
-    document.getElementById('r-url').textContent    = v('f-url');
+    document.getElementById('r-url').textContent    = (v('f-url') !== '—' ? v('f-url') : '') + '.futurex.sa';
     document.getElementById('r-type').textContent   = v('f-type');
     document.getElementById('r-target').textContent = v('f-target');
     document.getElementById('r-users').textContent  = v('f-users');
+    document.getElementById('r-q1').textContent     = document.querySelector('input[name="q1"]:checked')?.value || '—';
+    document.getElementById('r-q2').textContent     = document.querySelector('input[name="q2"]:checked')?.value || '—';
+    document.getElementById('r-q3').textContent     = document.querySelector('input[name="q3"]:checked')?.value || '—';
     document.getElementById('r-desc').textContent   = v('f-desc');
-    document.getElementById('r-scope') && (document.getElementById('r-scope').textContent = v('f-scope'));
-    document.getElementById('r-goals').textContent  = v('f-goals');
     switchPage('page-form', 'page-review');
   }
 
